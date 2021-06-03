@@ -110,37 +110,34 @@ define clickhouse::server::server (
   if ( has_key($dotconfig, 'openSSL.server.certificateFile') ){
     $cert = $dotconfig['openSSL.server.certificateFile']
   } else {
-
     $cert = "${conf_dir}/server.crt"
-    file { "$cert":
-      ensure  => present,
-      mode    => '0644',
-      require => Exec["Clickhouse [$title] generate certificates"],
-    }
+  }
+  file { "$cert":
+    ensure  => present,
+    mode    => '0644',
+    require => Exec["Clickhouse [$title] generate certificates"],
   }
 
   if ( has_key($dotconfig, 'openSSL.server.privateKeyFile') ) {
     $key = $dotconfig['openSSL.server.privateKeyFile']
   } else {
-
     $key  = "${conf_dir}/server.key"
-    file { "$key":
-      ensure  => present,
-      mode    => '0640',
-      require => Exec["Clickhouse [$title] generate certificates"],
-    }
+  }
+  file { "$key":
+    ensure  => present,
+    mode    => '0640',
+    require => Exec["Clickhouse [$title] generate certificates"],
   }
 
   if ( has_key($dotconfig, 'openSSL.server.dhParamsFile') ) {
     $dhparam = $dotconfig['openSSL.server.dhParamsFile']
   } else {
-
     $dhparam = "${conf_dir}/dhparam.pem"
-    file { "$dhparam":
-      ensure  => present,
-      mode    => '0640',
-      require => Exec["Clickhouse [$title] generate certificates"],
-    }
+  }
+  file { "$dhparam":
+    ensure  => present,
+    mode    => '0640',
+    require => Exec["Clickhouse [$title] generate certificates"],
   }
 
   $openssl_params = "-new -newkey rsa:4096 -days 3650 -nodes -x509"
