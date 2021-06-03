@@ -1,0 +1,22 @@
+[Unit]
+Description=ClickHouse Server (analytic DBMS for big data) - %i
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=clickhouse
+Group=clickhouse
+Restart=always
+RestartSec=30
+RuntimeDirectory=clickhouse-server
+# Deny use "server" as instance
+ExecStartPre=/bin/bash -c "test %i != 'production' || (/bin/echo 'ERROR: Start clickhouse-server.service instead clickhouse-instance@production.service'; exit 1)"
+ExecStartPre=/bin/bash -c "test %i != 'server' || (/bin/echo 'ERROR: Start clickhouse-server.service instead clickhouse-instance@server.service'; exit 1)"
+ExecStart=/usr/bin/clickhouse-server --config=/etc/clickhouse-%i/config.xml --pid-file=/run/clickhouse-server/clickhouse-server-%i.pid
+LimitCORE=infinity
+LimitNOFILE=500000
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_IPC_LOCK CAP_SYS_NICE
+
+[Install]
+WantedBy=multi-user.target
